@@ -2,38 +2,71 @@ import * as vscode from "vscode";
 import Timer from "./timer";
 
 export default class Manager {
-  _timer: Timer;
+  _timer?: Timer;
   _interval?: ReturnType<typeof setInterval>;
   _statusBar: vscode.StatusBarItem;
-  _pausing: boolean = false;
+  _status: "waiting" | "doing" | "pausing" | "done" = "waiting";
   _repeatCounts: number = 0;
 
   constructor() {
-    this._timer = new Timer(loadConfig("knockTime", "23:30"), this.doKelgel);
     this._statusBar = vscode.window.createStatusBarItem(
-      vscode.StatusBarAlignment.Left
+      vscode.StatusBarAlignment.Right
     );
-    this._statusBar.text = "肛宝";
+    this._statusBar.text = "纲宝";
     this._statusBar.command = "kegel-exercises.pauseTimer";
     this._statusBar.show();
+    this._timer = new Timer(
+      loadConfig("knockTime", "23:30"),
+      this.doKelgel,
+      this.reset
+    );
+  }
+
+  public showQuickPick() {
+    const picker = this._status !== "doing" ? ["开始"] : ["暂停", "结束"];
+
+    vscode.window
+      .showQuickPick(picker, {
+        canPickMany: false,
+        placeHolder: "纲宝",
+      })
+      .then((res) => {
+        if (res === "开始") {
+          if (this._status === "pausing") {
+            this._status = "doing";
+          } else {
+            this._status = "waiting";
+            this.doKelgel();
+          }
+        }
+        if (res === "暂停") {
+          this._status = "pausing";
+        }
+        if (res === "结束") {
+          this._status = "done";
+          this.reset("纲包：已结束");
+        }
+      });
   }
 
   doKelgel() {
+    if (this._status === "done") return;
+    this.reset();
     let countdown = 5;
     let status: "focus" | "relax" = "focus";
-
+    this._status = "doing";
     this._interval = setInterval(() => {
-      if (this._pausing) {
+      if (this._status === "pausing") {
         return;
       }
       if (this._repeatCounts >= 60) {
         this._repeatCounts = 0;
-        this.complete();
+        this.reset("纲包：已完成");
         return;
       }
 
       if (status === "relax") {
-        this._statusBar.text = `放松: ${countdown}s`;
+        this._statusBar.text = `呼气: ${countdown}s`;
         countdown--;
         if (countdown <= 0) {
           countdown = 5;
@@ -41,37 +74,37 @@ export default class Manager {
           this._repeatCounts++;
         }
       } else {
-        this._statusBar.text = `夹紧: ${countdown}s`;
+        this._statusBar.text = `吸气: ${countdown}s`;
         countdown--;
         if (countdown <= 0) {
           countdown = 2;
-          status = "focus";
+          status = "relax";
         }
       }
     }, 1000);
   }
 
-  onConfigChange(e: vscode.ConfigurationChangeEvent) {
+  reset(text?: string) {
+    this._status = "waiting";
+    this._statusBar.text = text || `纲宝`;
     clearInterval(this._interval);
+    this._timer?.dispose();
+  }
+
+  public dispose() {
+    this.reset();
+    this._timer?.dispose();
+  }
+
+  public onConfigChange(e: vscode.ConfigurationChangeEvent) {
     if (e.affectsConfiguration("kegel-exercises.knockTime")) {
-      this._timer.dispose();
-      this._timer = new Timer(loadConfig("knockTime", "18:30"), this.doKelgel);
-      this._statusBar.text = "肛宝";
+      this.reset();
+      this._timer = new Timer(
+        loadConfig("knockTime", "23:30"),
+        this.doKelgel,
+        this.reset
+      );
     }
-  }
-
-  pauseOrRestart() {
-    this._pausing = !this._pausing;
-  }
-
-  complete() {
-    this._statusBar.text = `完成`;
-    clearInterval(this._interval);
-  }
-
-  dispose() {
-    this.complete();
-    this._timer.dispose();
   }
 }
 
@@ -80,9 +113,3 @@ function loadConfig(key: "knockTime", defaultValue: any) {
     .getConfiguration("kegel-exercises")
     .get(key, defaultValue);
 }
-
-/**
- * 状态栏悬浮提示倒计时等
- *
- *
- */

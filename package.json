@@ -26,7 +26,7 @@
         "title": "%extension-title%",
         "properties": {
           "kegel-exercises.knockTime": {
-            "type": "object",
+            "type": "string",
             "description": "%config-knock-time%"
           }
         }

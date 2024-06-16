@@ -8,7 +8,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand("kegel-exercises.pauseTimer", () => {
-      manager.pauseOrRestart();
+      manager.showQuickPick();
     }),
     vscode.workspace.onDidChangeConfiguration((e) => {
       manager.onConfigChange(e);
