@@ -2,12 +2,14 @@ import dayjs from "dayjs";
 
 export default class Timer {
   /**每日几时几分(如:14:33表示的是每日14时33分) */
-  _dayTime: string;
-  _doSomeThing: () => void;
-  _interval?: ReturnType<typeof setInterval>;
-  _timeOut?: ReturnType<typeof setTimeout>;
-  _done: boolean = false;
-  _onNewDay: () => void;
+  private _dayTime: string;
+  private _done: boolean = false;
+
+  private _interval?: ReturnType<typeof setInterval>;
+  private _timeOut?: ReturnType<typeof setTimeout>;
+
+  private _doSomeThing: () => void;
+  private _onNewDay: () => void;
 
   constructor(dayTime: string, doSomeThing: () => void, onNewDay: () => void) {
     this._dayTime = dayTime;
@@ -15,6 +17,11 @@ export default class Timer {
     this._onNewDay = onNewDay;
     this._startTimeChecker();
     this._doSomeThingIfTimeOk();
+  }
+
+  public dispose() {
+    clearTimeout(this._timeOut);
+    clearInterval(this._interval);
   }
 
   private get remainSeconds() {
@@ -31,6 +38,7 @@ export default class Timer {
       this._doSomeThingIfTimeOk();
       if (dayjs().hour() === 0 && dayjs().minute() === 0) {
         this._onNewDay();
+        this._done = false;
       }
     }, 1000 * 60);
   }
@@ -44,13 +52,7 @@ export default class Timer {
       this._timeOut = setTimeout(() => {
         this._doSomeThing();
         this._done = true;
-        clearInterval(this._interval);
       }, this.remainSeconds * 1000);
     }
-  }
-
-  public dispose() {
-    clearTimeout(this._timeOut);
-    clearInterval(this._interval);
   }
 }

@@ -5,7 +5,7 @@
   "publisher": "2333Ge",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.90.0"
+    "vscode": "^1.80.0"
   },
   "categories": [
     "Other"
@@ -27,7 +27,13 @@
         "properties": {
           "kegel-exercises.knockTime": {
             "type": "string",
-            "description": "%config-knock-time%"
+            "description": "%config-knock-time%",
+            "default": "17:30"
+          },
+          "kegel-exercises.alertTip": {
+            "type": "string",
+            "description": "定时完成提示文案",
+            "default": "开启今天的练习吗?"
           }
         }
       }
