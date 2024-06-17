@@ -5,8 +5,9 @@
   "publisher": "2333Ge",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.80.0"
+    "vscode": "^1.90.0"
   },
+  "icon": "images/logo.jpg",
   "categories": [
     "Other"
   ],
@@ -48,7 +49,10 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
     "lint": "eslint src --ext ts",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "package2": "pnpm vsce package --no-dependencies",
+    "publish2": "pnpm vsce publish --no-dependencies"
+
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",
