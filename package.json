@@ -5,12 +5,16 @@
   "publisher": "2333Ge",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.90.0"
+    "vscode": "^1.80.0"
   },
   "icon": "images/logo.jpg",
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/2333Ge/kegel-exercises"
+  },
   "activationEvents": [
     "onStartupFinished"
   ],
@@ -52,12 +56,11 @@
     "test": "vscode-test",
     "package2": "pnpm vsce package --no-dependencies",
     "publish2": "pnpm vsce publish --no-dependencies"
-
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
-    "@types/vscode": "^1.90.0",
+    "@types/vscode": "^1.80.0",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
     "@typescript-eslint/parser": "^7.11.0",
     "@vscode/test-cli": "^0.0.9",

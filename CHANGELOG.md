@@ -1,9 +1,8 @@
 # Change Log
 
-All notable changes to the "kegel-exercises" extension will be documented in this file.
+## 0.0.1（24.06.18）
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+- 跟练模式
+- 定时提醒
+- 支持暂停、中断、继续
+- 可设置：弹窗文案、提醒时间
